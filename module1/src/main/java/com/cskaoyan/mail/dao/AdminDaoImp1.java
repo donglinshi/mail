@@ -3,14 +3,17 @@ package com.cskaoyan.mail.dao;
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
 import com.cskaoyan.mail.model.bo.AdminLoginBO;
+import com.cskaoyan.mail.model.bo.SearchAdminBO;
 import com.cskaoyan.mail.model.bo.UpdateAdmin;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,5 +92,37 @@ public class AdminDaoImp1 implements AdminDao {
             e.printStackTrace();
         }
         return update != 0 ? 0 : 1;
+    }
+
+    /**
+     * @description: 动态拼接sql查询语句，实现查询
+     * 1.email不为空，nickname为空 ：select * from admin where email like ?
+     * 2.email为空，nickname不为空 ：select * from admin where nickname like ?
+     * 3.email不为空，nickname不为空 ：select * from admin where email like ? and nickname like ?
+     * @params:  searchAdminBO
+     * @return:  List<Admin>
+     * @author: 史栋林
+     */
+    public List<Admin> searchAdmins(SearchAdminBO searchAdminBo) {
+        String baseSQL = "select * from admin where 1 = 1";
+        //存储参数的list
+        List<Object> list = new ArrayList<Object>();
+        //完成sql查询语句的拼接
+        if (!StringUtils.isEmpty(searchAdminBo.getEmail())){
+            baseSQL = baseSQL + " and email like ?";
+            list.add("%" + searchAdminBo.getEmail() + "%");
+        }
+        if (!StringUtils.isEmpty(searchAdminBo.getNickname())){
+            baseSQL = baseSQL + " and nickname like ?";
+            list.add("%" + searchAdminBo.getNickname() + "%");
+        }
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<Admin> admins = null;
+        try {
+            admins = runner.query(baseSQL,new BeanListHandler<Admin>(Admin.class),list.toArray());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return admins;
     }
 }

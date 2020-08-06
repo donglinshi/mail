@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
 import com.cskaoyan.mail.model.bo.AdminLoginBO;
+import com.cskaoyan.mail.model.bo.SearchAdminBO;
 import com.cskaoyan.mail.model.bo.UpdateAdmin;
 import com.cskaoyan.mail.model.vo.AdminLoginVO;
 import com.cskaoyan.mail.service.AdminService;
@@ -13,12 +14,10 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,10 +43,38 @@ public class AdminServlet extends HttpServlet {
             addAdmins(request,response);
         }else if ("updateAdminss".equals(action)){
             updateAdmin(request,response);
+        }else if ("getSearchAdmins".equals(action)){
+            getSearchAdmins(request,response);
         }
 
     }
 
+    /**
+     * @description: 管理员账户信息的输入查询(多条件)
+     * 1.获取请求体中的参数----json字符串
+     * 2.处理-----考虑三层架构，重点时sql的处理拼接
+     * 3.响应-----抓公网上的响应报文格式，保持一致
+     * @params: request,response
+     * @author: 史栋林
+     */
+    private void getSearchAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        SearchAdminBO searchAdminBo = gson.fromJson(requestBody, SearchAdminBO.class);
+        //输入为空时不需要sql查询
+        if (StringUtils.isEmpty(searchAdminBo.getEmail()) && StringUtils.isEmpty(searchAdminBo.getNickname())){
+            response.getWriter().println(gson.toJson(Result.error("参数不要为空！")));
+            return;
+        }
+        List<Admin> admins = adminService.searchAdmins(searchAdminBo);
+
+        response.getWriter().println(gson.toJson(Result.ok(admins)));
+    }
+
+    /**
+     * @description:修改管理员账户信息
+     * @params: request,response
+     * @author: 史栋林
+     */
     private void updateAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //获取请求体
         String requestBody = HttpUtils.getRequestBody(request);
@@ -64,8 +91,7 @@ public class AdminServlet extends HttpServlet {
 
     /**
      * @description:添加新的管理员信息
-     * @params:
-     * @return:
+     * @params:request,response
      * @author: 史栋林
      */
     private void addAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {

@@ -5,6 +5,7 @@ import com.cskaoyan.mail.dao.AdminDaoImp1;
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
 import com.cskaoyan.mail.model.bo.AdminLoginBO;
+import com.cskaoyan.mail.model.bo.SearchAdminBO;
 import com.cskaoyan.mail.model.bo.UpdateAdmin;
 
 import java.util.List;
@@ -39,6 +40,10 @@ public class AdminServiceImp1 implements AdminService {
 
     public int deleteAdmin(Integer id) {
         return adminDao.deleteAdmin(id);
+    }
+
+    public List<Admin> searchAdmins(SearchAdminBO searchAdminBo) {
+        return adminDao.searchAdmins(searchAdminBo);
     }
 
 }
