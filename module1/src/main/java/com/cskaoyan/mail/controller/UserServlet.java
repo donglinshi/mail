@@ -40,8 +40,25 @@ public class UserServlet extends HttpServlet {
             allUser(request,response);
         }else if ("searchUser".equals(action)){
             searchUser(request,response);
+        }else if ("deleteUser".equals(action)){
+            deleteUser(request,response);
         }
 
+    }
+
+    /**
+     * @description:删除用户信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        int code = userService.deleteUser(id);
+        if (code == 0){
+            response.getWriter().println(gson.toJson(Result.error("删除失败！")));
+            return;
+        }
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

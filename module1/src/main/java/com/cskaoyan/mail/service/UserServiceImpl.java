@@ -21,4 +21,8 @@ public class UserServiceImpl implements UserService {
     public List<User> searchUser(String word) {
         return userDao.searchUser(word);
     }
+
+    public int deleteUser(String id) {
+        return userDao.deleteUser(id);
+    }
 }

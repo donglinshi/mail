@@ -13,4 +13,6 @@ public interface UserDao {
     List<User> allUser();
 
     List<User> searchUser(String word);
+
+    int deleteUser(String id);
 }

@@ -38,4 +38,16 @@ public class UserDaoImpl implements UserDao {
         }
         return list;
     }
+
+    public int deleteUser(String id) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Integer update = null;
+        try {
+            update = runner.update("delete from user where id = ?",id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return update != 0 ? 1: 0;
+    }
 }
