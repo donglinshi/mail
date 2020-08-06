@@ -25,4 +25,17 @@ public class UserDaoImpl implements UserDao {
         }
         return list;
     }
+
+    public List<User> searchUser(String word) {
+
+        word = "%" + word + "%";
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<User> list = null;
+        try {
+            list = runner.query("select * from user where nickname like ?",new BeanListHandler<User>(User.class),word);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

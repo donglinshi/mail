@@ -5,6 +5,7 @@ import com.cskaoyan.mail.model.User;
 import com.cskaoyan.mail.service.UserService;
 import com.cskaoyan.mail.service.UserServiceImpl;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,8 +38,22 @@ public class UserServlet extends HttpServlet {
         String action = requestURI.replace("/api/admin/user/", "");
         if ("allUser".equals(action)){
             allUser(request,response);
+        }else if ("searchUser".equals(action)){
+            searchUser(request,response);
         }
 
+    }
+
+    /**
+     * @description:单条件查询，模糊查询
+     * @params:
+     * @author: 史栋林
+     */
+    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //获取url中的参数
+        String word = request.getParameter("word");
+        List<User> list = userService.searchUser(word);
+        response.getWriter().println(gson.toJson(Result.ok(list)));
     }
 
     /**

@@ -17,4 +17,8 @@ public class UserServiceImpl implements UserService {
     public List<User> allUser() {
         return userDao.allUser();
     }
+
+    public List<User> searchUser(String word) {
+        return userDao.searchUser(word);
+    }
 }
