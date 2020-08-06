@@ -1,10 +1,7 @@
 package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Admin;
-import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
-import com.cskaoyan.mail.model.bo.AdminLoginBO;
-import com.cskaoyan.mail.model.bo.SearchAdminBO;
-import com.cskaoyan.mail.model.bo.UpdateAdmin;
+import com.cskaoyan.mail.model.bo.*;
 
 import java.util.List;
 
@@ -27,4 +24,6 @@ public interface AdminDao {
     int deleteAdmin(Integer id);
 
     List<Admin> searchAdmins(SearchAdminBO searchAdminBo);
+
+    int changePwd(ChangePwdBO changePwdBO);
 }

@@ -2,10 +2,7 @@ package com.cskaoyan.mail.controller;
 
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.Result;
-import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
-import com.cskaoyan.mail.model.bo.AdminLoginBO;
-import com.cskaoyan.mail.model.bo.SearchAdminBO;
-import com.cskaoyan.mail.model.bo.UpdateAdmin;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.AdminLoginVO;
 import com.cskaoyan.mail.service.AdminService;
 import com.cskaoyan.mail.service.AdminServiceImp1;
@@ -45,8 +42,34 @@ public class AdminServlet extends HttpServlet {
             updateAdmin(request,response);
         }else if ("getSearchAdmins".equals(action)){
             getSearchAdmins(request,response);
+        }else if ("changePwd".equals(action)){
+            changePwd(request,response);
         }
 
+    }
+
+    /**
+     * @description:修改后台管理员信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void changePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        ChangePwdBO changePwdBO = gson.fromJson(requestBody, ChangePwdBO.class);
+        //新旧密码不一致时不用查询
+        if (StringUtils.isEmpty(changePwdBO.getNewPwd()) || StringUtils.isEmpty(changePwdBO.getConfirmPwd())){
+            response.getWriter().println(gson.toJson(Result.error("新密码不允许为空！")));
+            return;
+        }
+        if (!StringUtils.equals(changePwdBO.getNewPwd(),changePwdBO.getConfirmPwd())){
+            response.getWriter().println(gson.toJson(Result.error("新旧密码请保持一致！")));
+            return;
+        }
+        int code = adminService.changePwd(changePwdBO);
+        if (code == 0){
+            response.getWriter().println(gson.toJson(Result.error("旧密码错误！")));
+        }
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

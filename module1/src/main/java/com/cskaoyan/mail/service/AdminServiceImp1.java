@@ -3,10 +3,7 @@ package com.cskaoyan.mail.service;
 import com.cskaoyan.mail.dao.AdminDao;
 import com.cskaoyan.mail.dao.AdminDaoImp1;
 import com.cskaoyan.mail.model.Admin;
-import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
-import com.cskaoyan.mail.model.bo.AdminLoginBO;
-import com.cskaoyan.mail.model.bo.SearchAdminBO;
-import com.cskaoyan.mail.model.bo.UpdateAdmin;
+import com.cskaoyan.mail.model.bo.*;
 
 import java.util.List;
 
@@ -44,6 +41,10 @@ public class AdminServiceImp1 implements AdminService {
 
     public List<Admin> searchAdmins(SearchAdminBO searchAdminBo) {
         return adminDao.searchAdmins(searchAdminBo);
+    }
+
+    public int changePwd(ChangePwdBO changePwdBO) {
+        return adminDao.changePwd(changePwdBO);
     }
 
 }

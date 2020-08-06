@@ -1,10 +1,7 @@
 package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Admin;
-import com.cskaoyan.mail.model.bo.AdminAddAdminBO;
-import com.cskaoyan.mail.model.bo.AdminLoginBO;
-import com.cskaoyan.mail.model.bo.SearchAdminBO;
-import com.cskaoyan.mail.model.bo.UpdateAdmin;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -124,5 +121,17 @@ public class AdminDaoImp1 implements AdminDao {
             e.printStackTrace();
         }
         return admins;
+    }
+
+    public int changePwd(ChangePwdBO changePwdBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Integer code = null;
+        try {
+            code = runner.update("update admin set pwd = ? where email = ? and pwd = ?",
+                    changePwdBO.getNewPwd(),changePwdBO.getAdminToken(),changePwdBO.getOldPwd());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return code !=0 ? 1: 0;
     }
 }
