@@ -2,6 +2,7 @@ package com.cskaoyan.mail.controller;
 
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.service.GoodsService;
 import com.cskaoyan.mail.service.GoodsServiceImpl;
 import com.google.gson.Gson;
@@ -33,13 +34,28 @@ public class GoodsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        System.out.println("doget");
+        //System.out.println("doget");
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/goods/", "");
         if ("getType".equals(action)){
             getType(request,response);
+        }else if ("getGoodsByType".equals(action)){
+            getGoodsByType(request,response);
         }
 
+    }
+
+    /**
+     * @description:获取指定类目的商品
+     * @params:
+     * @author: 史栋林
+     */
+    private void getGoodsByType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //获取类目id
+        String typeId = request.getParameter("typeId");
+        //校验参数 可无
+        List<TypeGoodsVO> voList = goodsService.getGoodsByType(typeId);
+        response.getWriter().println(gson.toJson(Result.ok(voList)));
     }
 
     /**

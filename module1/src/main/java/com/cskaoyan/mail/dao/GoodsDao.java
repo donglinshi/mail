@@ -1,6 +1,7 @@
 package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface GoodsDao {
     List<Type> getType();
+
+    List<TypeGoodsVO> getGoodsByType(String typeId);
 }

@@ -3,6 +3,7 @@ package com.cskaoyan.mail.service;
 import com.cskaoyan.mail.dao.GoodsDao;
 import com.cskaoyan.mail.dao.GoodsDaoImpl;
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 
 import java.util.List;
 
@@ -16,5 +17,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     public List<Type> getType() {
         return goodsDao.getType();
+    }
+
+    public List<TypeGoodsVO> getGoodsByType(String typeId) {
+        return goodsDao.getGoodsByType(typeId);
     }
 }
