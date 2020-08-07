@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
@@ -42,4 +43,8 @@ public interface GoodsDao {
     void deleteGoods(String id);
 
     void deleteSpec(String id);
+
+    void addType(AddTypeBO addTypeBO);
+
+    int deleteType(String typeId);
 }

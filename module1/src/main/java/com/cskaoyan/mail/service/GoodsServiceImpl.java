@@ -130,4 +130,12 @@ public class GoodsServiceImpl implements GoodsService {
         goodsDao.deleteSpec(id);
     }
 
+    public void addType(AddTypeBO addTypeBO) {
+        goodsDao.addType(addTypeBO);
+    }
+
+    public int deleteType(String typeId) {
+        return goodsDao.deleteType(typeId);
+    }
+
 }

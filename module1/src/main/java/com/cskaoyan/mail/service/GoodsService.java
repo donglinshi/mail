@@ -3,6 +3,7 @@ package com.cskaoyan.mail.service;
 import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Type;
 import com.cskaoyan.mail.model.bo.AddGoodsBO;
+import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.UpdateGoodsBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
@@ -33,4 +34,8 @@ public interface GoodsService {
     void updateGoods(UpdateGoodsBO updateGoodsBO);
 
     void deleteGoods(String id);
+
+    void addType(AddTypeBO addTypeBO);
+
+    int deleteType(String typeId);
 }

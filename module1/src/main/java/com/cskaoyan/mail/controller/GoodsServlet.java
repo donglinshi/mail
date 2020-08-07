@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.Type;
 import com.cskaoyan.mail.model.bo.AddGoodsBO;
 import com.cskaoyan.mail.model.AddSpec;
+import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.UpdateGoodsBO;
 import com.cskaoyan.mail.model.vo.GoodsAndSpecInfoVO;
@@ -49,8 +50,21 @@ public class GoodsServlet extends HttpServlet {
             deleteSpec(request,response);
         }else if ("updateGoods".equals(action)){
             updateGoods(request,response);
+        }else if ("addType".equals(action)){
+            addType(request,response);
         }
+    }
 
+    /**
+     * @description:添加类目
+     * @params:
+     * @author: 史栋林
+     */
+    private void addType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AddTypeBO addTypeBO = gson.fromJson(requestBody, AddTypeBO.class);
+        goodsService.addType(addTypeBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -135,8 +149,24 @@ public class GoodsServlet extends HttpServlet {
             getGoodsInfo(request,response);
         }else if ("deleteGoods".equals(action)){
             deleteGoods(request,response);
+        }else if ("deleteType".equals(action)){
+            deleteType(request,response);
         }
 
+    }
+
+    /**
+     * @description:删除当前目类，现在只实现了目类下商品为空时可以删除
+     * @params:
+     * @author: 史栋林
+     */
+    private void deleteType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String typeId = request.getParameter("typeId");
+        int code = goodsService.deleteType(typeId);
+        if (code == 0){
+            response.getWriter().println(gson.toJson(Result.error("当前目类之下存在商品，不可删除！")));
+        }
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

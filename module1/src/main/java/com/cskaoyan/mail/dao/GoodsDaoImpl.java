@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
@@ -195,6 +196,33 @@ public class GoodsDaoImpl implements GoodsDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addType(AddTypeBO addTypeBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("insert into type values (null,?)",addTypeBO.getName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int deleteType(String typeId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Long query = null;
+        try {
+            query = (Long) runner.query("select count(*) from goods where typeId = ?", new ScalarHandler(), typeId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (query == 0){
+            try {
+                runner.update("delete from type where id = ?",typeId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return query == 0 ? 1 : 0;
     }
 
 
