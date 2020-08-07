@@ -75,4 +75,17 @@ public class Goods {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    public Goods() {
+    }
+
+    public Goods(Integer id, String img, String name, Double price, Integer typeId, Integer stockNum, String desc) {
+        this.id = id;
+        this.img = img;
+        this.name = name;
+        this.price = price;
+        this.typeId = typeId;
+        this.stockNum = stockNum;
+        this.desc = desc;
+    }
 }

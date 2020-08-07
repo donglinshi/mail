@@ -1,6 +1,7 @@
 package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.bo.AddGoodsBO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface GoodsService {
     List<Type> getType();
 
     List<TypeGoodsVO> getGoodsByType(String typeId);
+
+    void addGoods(AddGoodsBO addGoodsBO);
 }
