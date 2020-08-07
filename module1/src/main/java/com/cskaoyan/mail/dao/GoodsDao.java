@@ -1,9 +1,13 @@
 package com.cskaoyan.mail.dao;
 
+import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.Type;
-import com.cskaoyan.mail.model.bo.AddGoodsBO;
+import com.cskaoyan.mail.model.bo.DeleteSpecBO;
+import com.cskaoyan.mail.model.bo.UpdateSpecBO;
+import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 
 import java.util.List;
@@ -22,4 +26,20 @@ public interface GoodsDao {
     int getLastInsertId();
 
     void addSpec(List<Spec> specList);
+
+    GoodsInfoVO getGoods(String id);
+
+    List<SpecInfoVO> getSpecs(String id);
+
+    void addSpec(AddSpec addSpec);
+
+    void deleteSpec(DeleteSpecBO deleteSpecBO);
+
+    void updateGoods(Goods goods);
+
+    void updateSpec(List<UpdateSpecBO> specList);
+
+    void deleteGoods(String id);
+
+    void deleteSpec(String id);
 }

@@ -3,6 +3,12 @@ package com.cskaoyan.mail.controller;
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.Type;
 import com.cskaoyan.mail.model.bo.AddGoodsBO;
+import com.cskaoyan.mail.model.AddSpec;
+import com.cskaoyan.mail.model.bo.DeleteSpecBO;
+import com.cskaoyan.mail.model.bo.UpdateGoodsBO;
+import com.cskaoyan.mail.model.vo.GoodsAndSpecInfoVO;
+import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.service.GoodsService;
 import com.cskaoyan.mail.service.GoodsServiceImpl;
@@ -37,10 +43,52 @@ public class GoodsServlet extends HttpServlet {
             imgUpload(request,response);
         }else if ("addGoods".equals(action)){
             addGoods(request,response);
+        }else if ("addSpec".equals(action)){
+            addSpec(request,response);
+        }else if ("deleteSpec".equals(action)){
+            deleteSpec(request,response);
+        }else if ("updateGoods".equals(action)){
+            updateGoods(request,response);
         }
 
     }
 
+    /**
+     * @description:编辑商品
+     * @params:
+     * @author: 史栋林
+     */
+    private void updateGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        UpdateGoodsBO updateGoodsBO = gson.fromJson(requestBody, UpdateGoodsBO.class);
+        goodsService.updateGoods(updateGoodsBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * @description:在编辑商品时删除规格
+     * @params:
+     * @author: 史栋林
+     */
+    private void deleteSpec(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        DeleteSpecBO deleteSpecBO = gson.fromJson(requestBody,DeleteSpecBO.class);
+        goodsService.deleteSpec(deleteSpecBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * @description:在编辑商品时添加规格
+     * @params:
+     * @author: 史栋林
+     */
+    private void addSpec(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String requestBody = HttpUtils.getRequestBody(request);
+        AddSpec addSpec  = gson.fromJson(requestBody, AddSpec.class);
+        goodsService.addSpec(addSpec);
+        response.getWriter().println(gson.toJson(Result.ok(addSpec)));
+    }
 
     /**
      * @description:添加新商品
@@ -83,8 +131,43 @@ public class GoodsServlet extends HttpServlet {
             getType(request,response);
         }else if ("getGoodsByType".equals(action)){
             getGoodsByType(request,response);
+        }else if ("getGoodsInfo".equals(action)){
+            getGoodsInfo(request,response);
+        }else if ("deleteGoods".equals(action)){
+            deleteGoods(request,response);
         }
 
+    }
+
+    /**
+     * @description:删除商品信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void deleteGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        goodsService.deleteGoods(id);
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * @description:获取所编辑商品的信息
+     * 1.获取goods表中的数据
+     * 2.获取spec表中的数据
+     * 3.包装数据
+     * @params:
+     * @author: 史栋林
+     */
+    private void getGoodsInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //首先获取参数
+        String id = request.getParameter("id");
+        //获取goods的相应字段
+        GoodsInfoVO goodsInfoVO = goodsService.getGoods(id);
+        //获取指定的spec表中的相应字段
+        List<SpecInfoVO> specInfoVOList = goodsService.getSpecs(id);
+        //拼接出接口想要的数据类型，之后再转化为json对象
+        GoodsAndSpecInfoVO goodsAndSpecInfoVO = new GoodsAndSpecInfoVO(goodsInfoVO,specInfoVOList);
+        response.getWriter().println(gson.toJson(Result.ok(goodsAndSpecInfoVO)));
     }
 
     /**

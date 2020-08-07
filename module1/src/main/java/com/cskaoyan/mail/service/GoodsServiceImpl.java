@@ -2,11 +2,13 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.dao.GoodsDao;
 import com.cskaoyan.mail.dao.GoodsDaoImpl;
+import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.Type;
-import com.cskaoyan.mail.model.bo.AddGoodsBO;
-import com.cskaoyan.mail.model.bo.SpecBO;
+import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 
 import java.util.ArrayList;
@@ -70,7 +72,62 @@ public class GoodsServiceImpl implements GoodsService {
         }
 
         goodsDao.addSpec(specList);
-
-
     }
+
+    public GoodsInfoVO getGoods(String id) {
+        return goodsDao.getGoods(id);
+    }
+
+    public List<SpecInfoVO> getSpecs(String id) {
+        return goodsDao.getSpecs(id);
+    }
+
+    public void addSpec(AddSpec addSpec) {
+        goodsDao.addSpec(addSpec);
+    }
+
+    public void deleteSpec(DeleteSpecBO deleteSpecBO) {
+        goodsDao.deleteSpec(deleteSpecBO);
+    }
+
+    /**
+     * 更新goods、spec表
+     * */
+    public void updateGoods(UpdateGoodsBO updateGoodsBO) {
+        //虽然代码重复了，但是先不优化
+        List<UpdateSpecBO> specList = updateGoodsBO.getSpecList();
+
+        double price = specList.get(0).getUnitPrice();
+        int stockNum = specList.get(0).getStockNum();
+
+        //找到价格的最小值
+        for (int i = 1; i < specList.size(); i++){
+            if (price > specList.get(i).getUnitPrice()){
+                price = specList.get(i).getUnitPrice();
+            }
+        }
+        //找到库存的最大值
+        for (int i = 1; i < specList.size(); i++){
+            if (stockNum < specList.get(i).getStockNum()){
+                stockNum = specList.get(i).getStockNum();
+            }
+        }
+        Goods goods = new Goods(updateGoodsBO.getId(),
+                updateGoodsBO.getImg(),
+                updateGoodsBO.getName(),
+                price,
+                updateGoodsBO.getTypeId(),
+                stockNum,
+                updateGoodsBO.getDesc());
+        goodsDao.updateGoods(goods);
+
+        //处理spec表,不用继续像添加一样的封装
+        goodsDao.updateSpec(specList);
+    }
+
+    public void deleteGoods(String id) {
+        goodsDao.deleteGoods(id);
+        goodsDao.deleteSpec(id);
+    }
+
 }
