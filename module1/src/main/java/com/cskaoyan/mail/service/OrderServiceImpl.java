@@ -82,5 +82,9 @@ public class OrderServiceImpl implements OrderService {
         orderDao.changeOrder(changeOrderBO);
     }
 
+    public void deleteOrder(String id) {
+        orderDao.deleteOrder(id);
+    }
+
 
 }

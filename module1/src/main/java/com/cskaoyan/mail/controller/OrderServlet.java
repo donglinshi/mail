@@ -92,8 +92,22 @@ public class OrderServlet extends HttpServlet {
         String action = requestURI.replace("/api/admin/order/", "");
         if("order".equals(action)){
             order(request,response);
+        }else if ("deleteOrder".equals(action)){
+            deleteOrder(request,response);
         }
 
+    }
+
+    /**
+     * @description:删除订单信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void deleteOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String id = request.getParameter("id");
+        orderService.deleteOrder(id);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

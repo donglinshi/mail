@@ -145,8 +145,10 @@ public class OrderDaoImpl implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
+        //修改的数量不可超过库存总量
+        if (changeOrderBO.getNum() > specInfoVO.getStockNum()){
+            return;
+        }
         try {
             runner.update("update orders set stateId = ?, goodsDetailId = ?, goodsNum = ?,spec = ?,price = ?, amount = ?  where id = ?",
                     changeOrderBO.getState(),
@@ -156,6 +158,16 @@ public class OrderDaoImpl implements OrderDao {
                     specInfoVO.getUnitPrice(),
                     specInfoVO.getUnitPrice() * changeOrderBO.getNum(),
                     changeOrderBO.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteOrder(String id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("delete from orders where id = ?",id);
         } catch (SQLException e) {
             e.printStackTrace();
         }

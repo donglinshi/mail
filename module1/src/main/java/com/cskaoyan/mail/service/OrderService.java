@@ -20,4 +20,6 @@ public interface OrderService {
     Map<String, Object> order(String id);
 
     void changeOrder(ChangeOrderBO changeOrderBO);
+
+    void deleteOrder(String id);
 }

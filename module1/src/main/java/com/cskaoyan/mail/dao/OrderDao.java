@@ -24,4 +24,6 @@ public interface OrderDao {
     List<OrderSpecVO> getOrderSpec(Integer id);//商品的id
 
     void changeOrder(ChangeOrderBO changeOrderBO);
+
+    void deleteOrder(String id);
 }
