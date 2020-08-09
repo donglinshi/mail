@@ -1,9 +1,14 @@
 package com.cskaoyan.mail.dao;
 
+import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
+import com.cskaoyan.mail.model.vo.SpecInfoVO;
+import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
+import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -101,5 +106,58 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
         return query.intValue();
+    }
+
+    public OrderByIdVO getOrder(String id) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        OrderByIdVO orderByIdVO = null;
+        try {
+            orderByIdVO = runner.query("select id,amount,goodsNum as num,goodsDetailId,stateId as state,goods,goodsId from orders where id = ?",
+                    new BeanHandler<OrderByIdVO>(OrderByIdVO.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderByIdVO;
+    }
+
+    public List<OrderSpecVO> getOrderSpec(Integer id) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<OrderSpecVO> orderSpecVO = null;
+        try {
+            orderSpecVO = runner.query("select id,specName,unitPrice from spec where goodsId = ?",
+                    new BeanListHandler<OrderSpecVO>(OrderSpecVO.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderSpecVO;
+    }
+
+    public void changeOrder(ChangeOrderBO changeOrderBO) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        SpecInfoVO specInfoVO = null;
+        try {
+            specInfoVO = runner.query("select id, specName, stockNum, unitPrice from spec where id = ?",
+                    new BeanHandler<SpecInfoVO>(SpecInfoVO.class),changeOrderBO.getSpec());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            runner.update("update orders set stateId = ?, goodsDetailId = ?, goodsNum = ?,spec = ?,price = ?, amount = ?  where id = ?",
+                    changeOrderBO.getState(),
+                    changeOrderBO.getSpec(),
+                    changeOrderBO.getNum(),
+                    specInfoVO.getSpecName(),
+                    specInfoVO.getUnitPrice(),
+                    specInfoVO.getUnitPrice() * changeOrderBO.getNum(),
+                    changeOrderBO.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

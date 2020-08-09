@@ -1,8 +1,10 @@
 package com.cskaoyan.mail.controller;
 
 import com.cskaoyan.mail.model.Result;
+import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
+import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.service.OrderService;
 import com.cskaoyan.mail.service.OrderServiceImpl;
 import com.cskaoyan.mail.utils.HttpUtils;
@@ -36,8 +38,24 @@ public class OrderServlet extends HttpServlet {
 
         if ("ordersByPage".equals(action)){
             ordersByPage(request,response);
+        }else if ("changeOrder".equals(action)){
+            changeOrder(request,response);
         }
 
+    }
+
+    /**
+     * @description:提交改变
+     * @params:
+     * @author: 史栋林
+     */
+    private void changeOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String requestBody = HttpUtils.getRequestBody(request);
+        ChangeOrderBO changeOrderBO = gson.fromJson(requestBody, ChangeOrderBO.class);
+        //暂时不校验
+        orderService.changeOrder(changeOrderBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -72,7 +90,24 @@ public class OrderServlet extends HttpServlet {
 
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/order/", "");
+        if("order".equals(action)){
+            order(request,response);
+        }
 
+    }
+
+    /**
+     * @description:获取所编辑订单的详细信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void order(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String id = request.getParameter("id");
+
+        Map<String,Object> result = orderService.order(id);
+
+        response.getWriter().println(gson.toJson(Result.ok(result)));
     }
 
 
