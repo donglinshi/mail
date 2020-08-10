@@ -152,6 +152,8 @@ public class AdminServlet extends HttpServlet {
         int code = adminService.login(loginBO);
         //返回响应结果
         if (code == 200){
+            //登陆成功后为拦截添加参数
+            request.getSession().setAttribute("username",loginBO.getEmail());
             response.getWriter().println(gson.toJson(Result.ok(new AdminLoginVO(loginBO.getEmail(),loginBO.getEmail()))));
             return;
         }
