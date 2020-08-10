@@ -6,6 +6,7 @@ import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.ReplyBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SearchGoodsVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
@@ -57,4 +58,6 @@ public interface GoodsDao {
     List<Message> repliedMsg();
 
     void reply(ReplyBO replyBO);
+
+    List<SearchGoodsVO> searchGoods(String keyword);
 }

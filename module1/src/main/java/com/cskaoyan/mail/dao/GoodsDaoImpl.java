@@ -6,6 +6,7 @@ import com.cskaoyan.mail.model.bo.DeleteSpecBO;
 import com.cskaoyan.mail.model.bo.ReplyBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SearchGoodsVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
@@ -281,5 +282,19 @@ public class GoodsDaoImpl implements GoodsDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<SearchGoodsVO> searchGoods(String keyword) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        keyword = "%" + keyword +"%";
+        List<SearchGoodsVO> list = null;
+        try {
+            list = runner.query("select id,img,name,price,typeId from goods where name like ?",
+                    new BeanListHandler<SearchGoodsVO>(SearchGoodsVO.class),keyword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

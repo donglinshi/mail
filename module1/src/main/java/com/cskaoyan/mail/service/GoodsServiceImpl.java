@@ -5,6 +5,7 @@ import com.cskaoyan.mail.dao.GoodsDaoImpl;
 import com.cskaoyan.mail.model.*;
 import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SearchGoodsVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
@@ -190,6 +191,10 @@ public class GoodsServiceImpl implements GoodsService {
 
     public void reply(ReplyBO replyBO) {
         goodsDao.reply(replyBO);
+    }
+
+    public List<SearchGoodsVO> searchGoods(String keyword) {
+        return goodsDao.searchGoods(keyword);
     }
 
 

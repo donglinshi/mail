@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Type;
 import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
+import com.cskaoyan.mail.model.vo.SearchGoodsVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
 import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
@@ -43,4 +44,7 @@ public interface GoodsService {
     List<RepliedMsgVO> repliedMsg();
 
     void reply(ReplyBO replyBO);
+
+    //前端的搜索
+    List<SearchGoodsVO> searchGoods(String keyword);
 }
