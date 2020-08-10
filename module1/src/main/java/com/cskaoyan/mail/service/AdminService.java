@@ -2,6 +2,7 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.UserName;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface AdminService {
     List<Admin> searchAdmins(SearchAdminBO searchAdminBo);
 
     int changePwd(ChangePwdBO changePwdBO);
+
+    UserName searchName(String email, String pwd);
 }

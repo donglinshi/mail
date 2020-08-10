@@ -1,10 +1,10 @@
-package com.cskaoyan.mail.model;
+package com.cskaoyan.mail.model.vo;
 
 /**
  * @author 史栋林
- * @date 2020/8/6 16:03
+ * @date 2020/8/10 22:20
  */
-public class User {
+public class UserInfoVO {
 
     private Integer id;
 
@@ -12,16 +12,11 @@ public class User {
 
     private String nickname;
 
-    private String pwd;
-
     private String recipient;
 
     private String address;
 
     private String phone;
-
-    public User() {
-    }
 
     public Integer getId() {
         return id;
@@ -45,14 +40,6 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
     }
 
     public String getRecipient() {

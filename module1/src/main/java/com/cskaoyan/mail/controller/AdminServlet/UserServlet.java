@@ -2,6 +2,7 @@ package com.cskaoyan.mail.controller.AdminServlet;
 
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.User;
+import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.service.UserService;
 import com.cskaoyan.mail.service.UserServiceImpl;
 import com.google.gson.Gson;
@@ -69,7 +70,7 @@ public class UserServlet extends HttpServlet {
     private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //获取url中的参数
         String word = request.getParameter("word");
-        List<User> list = userService.searchUser(word);
+        List<UserInfoVO> list = userService.searchUser(word);
         response.getWriter().println(gson.toJson(Result.ok(list)));
     }
 
@@ -79,7 +80,7 @@ public class UserServlet extends HttpServlet {
      * @author: 史栋林
      */
     private void allUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<User> list = userService.allUser();
+        List<UserInfoVO> list = userService.allUser();
         response.getWriter().println(gson.toJson(Result.ok(list)));
     }
 }

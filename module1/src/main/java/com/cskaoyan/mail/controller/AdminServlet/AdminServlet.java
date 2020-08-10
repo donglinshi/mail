@@ -4,6 +4,7 @@ import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.AdminLoginVO;
+import com.cskaoyan.mail.model.vo.UserName;
 import com.cskaoyan.mail.service.AdminService;
 import com.cskaoyan.mail.service.AdminServiceImp1;
 import com.cskaoyan.mail.utils.HttpUtils;
@@ -154,7 +155,9 @@ public class AdminServlet extends HttpServlet {
         if (code == 200){
             //登陆成功后为拦截添加参数
             request.getSession().setAttribute("username",loginBO.getEmail());
-            response.getWriter().println(gson.toJson(Result.ok(new AdminLoginVO(loginBO.getEmail(),loginBO.getEmail()))));
+
+            UserName userName = adminService.searchName(loginBO.getEmail(),loginBO.getPwd());
+            response.getWriter().println(gson.toJson(Result.ok(new AdminLoginVO(userName.getNickname(),userName.getNickname()))));
             return;
         }
         response.getWriter().println(gson.toJson(Result.error("请确认用户名和密码")));

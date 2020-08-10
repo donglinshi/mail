@@ -4,6 +4,7 @@ import com.cskaoyan.mail.dao.AdminDao;
 import com.cskaoyan.mail.dao.AdminDaoImp1;
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.UserName;
 
 import java.util.List;
 
@@ -45,6 +46,10 @@ public class AdminServiceImp1 implements AdminService {
 
     public int changePwd(ChangePwdBO changePwdBO) {
         return adminDao.changePwd(changePwdBO);
+    }
+
+    public UserName searchName(String email, String pwd) {
+        return adminDao.searchName(email,pwd);
     }
 
 }

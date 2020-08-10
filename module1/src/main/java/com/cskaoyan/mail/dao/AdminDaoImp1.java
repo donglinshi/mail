@@ -2,6 +2,7 @@ package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.UserName;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -133,5 +134,17 @@ public class AdminDaoImp1 implements AdminDao {
             e.printStackTrace();
         }
         return code !=0 ? 1: 0;
+    }
+
+    public UserName searchName(String email, String pwd) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        UserName userName = null;
+        try {
+            userName = runner.query("select nickname from admin where email = ? and pwd = ?",new BeanHandler<UserName>(UserName.class),email,pwd);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userName;
     }
 }
