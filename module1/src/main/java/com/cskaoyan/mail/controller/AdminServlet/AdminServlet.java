@@ -1,4 +1,4 @@
-package com.cskaoyan.mail.controller;
+package com.cskaoyan.mail.controller.AdminServlet;
 
 import com.cskaoyan.mail.model.Admin;
 import com.cskaoyan.mail.model.Result;

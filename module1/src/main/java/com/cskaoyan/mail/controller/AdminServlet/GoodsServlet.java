@@ -1,16 +1,15 @@
-package com.cskaoyan.mail.controller;
+package com.cskaoyan.mail.controller.AdminServlet;
 
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.Type;
-import com.cskaoyan.mail.model.bo.AddGoodsBO;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.AddSpec;
-import com.cskaoyan.mail.model.bo.AddTypeBO;
-import com.cskaoyan.mail.model.bo.DeleteSpecBO;
-import com.cskaoyan.mail.model.bo.UpdateGoodsBO;
 import com.cskaoyan.mail.model.vo.GoodsAndSpecInfoVO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
+import com.cskaoyan.mail.model.vo.msg.RepliedMsgVO;
 import com.cskaoyan.mail.service.GoodsService;
 import com.cskaoyan.mail.service.GoodsServiceImpl;
 import com.cskaoyan.mail.utils.FileUploadUtils;
@@ -52,7 +51,21 @@ public class GoodsServlet extends HttpServlet {
             updateGoods(request,response);
         }else if ("addType".equals(action)){
             addType(request,response);
+        }else if ("reply".equals(action)){
+            reply(request,response);
         }
+    }
+
+    /**
+     * @description:回复留言
+     * @params:
+     * @author: 史栋林
+     */
+    private void reply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        ReplyBO replyBO = gson.fromJson(requestBody,ReplyBO.class);
+        goodsService.reply(replyBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -151,8 +164,33 @@ public class GoodsServlet extends HttpServlet {
             deleteGoods(request,response);
         }else if ("deleteType".equals(action)){
             deleteType(request,response);
+        }else if ("noReplyMsg".equals(action)){
+            noReplyMsg(request,response);
+        }else if ("repliedMsg".equals(action)){
+            repliedMsg(request,response);
         }
 
+    }
+
+    /**
+     * @description:查询已回复留言列表
+     * @params:
+     * @author: 史栋林
+     */
+    private void repliedMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<RepliedMsgVO> list = goodsService.repliedMsg();
+        response.getWriter().println(gson.toJson(Result.ok(list)));
+    }
+
+    /**
+     * @description:查询未回复留言列表
+     * @params:
+     * @author: 史栋林
+     */
+    private void noReplyMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        List<NoReplyMsgVO> noReplyMsgVOS = goodsService.noReplyMsg();
+        response.getWriter().println(gson.toJson(Result.ok(noReplyMsgVOS)));
     }
 
     /**

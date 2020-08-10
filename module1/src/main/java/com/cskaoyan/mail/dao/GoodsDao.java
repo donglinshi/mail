@@ -1,15 +1,15 @@
 package com.cskaoyan.mail.dao;
 
-import com.cskaoyan.mail.model.AddSpec;
-import com.cskaoyan.mail.model.Goods;
-import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.*;
 import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
+import com.cskaoyan.mail.model.bo.ReplyBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
+import com.cskaoyan.mail.model.vo.msg.UserMsg;
 
 import java.util.List;
 
@@ -47,4 +47,14 @@ public interface GoodsDao {
     void addType(AddTypeBO addTypeBO);
 
     int deleteType(String typeId);
+
+    List<Message> noReplyMsg();
+
+    GoodsMsg getGoodsMsg(Integer goodsId);
+
+    UserMsg getUserMsg(Integer userId);
+
+    List<Message> repliedMsg();
+
+    void reply(ReplyBO replyBO);
 }

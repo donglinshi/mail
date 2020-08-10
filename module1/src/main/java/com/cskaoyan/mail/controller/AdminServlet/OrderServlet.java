@@ -1,4 +1,4 @@
-package com.cskaoyan.mail.controller;
+package com.cskaoyan.mail.controller.AdminServlet;
 
 import com.cskaoyan.mail.model.Result;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;

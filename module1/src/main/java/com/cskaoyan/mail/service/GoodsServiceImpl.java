@@ -2,16 +2,18 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.dao.GoodsDao;
 import com.cskaoyan.mail.dao.GoodsDaoImpl;
-import com.cskaoyan.mail.model.AddSpec;
-import com.cskaoyan.mail.model.Goods;
-import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.*;
 import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
+import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
+import com.cskaoyan.mail.model.vo.msg.RepliedMsgVO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -137,5 +139,58 @@ public class GoodsServiceImpl implements GoodsService {
     public int deleteType(String typeId) {
         return goodsDao.deleteType(typeId);
     }
+
+    public List<NoReplyMsgVO> noReplyMsg() {
+
+        List<Message> msg = goodsDao.noReplyMsg();
+        //结果集
+        List<NoReplyMsgVO> list = new ArrayList<NoReplyMsgVO>();
+        //时间格式
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        for (int i = 0; i < msg.size(); i++){
+            //对属性进行再封装
+            Integer goodsId = msg.get(i).getGoodsId();
+            Integer userId = msg.get(i).getUserId();
+            NoReplyMsgVO temp = new NoReplyMsgVO(msg.get(i).getId(),
+                    msg.get(i).getUserId(),
+                    msg.get(i).getGoodsId(),
+                    msg.get(i).getContent(),
+                    msg.get(i).getState(),
+                    simpleDateFormat.format(msg.get(i).getCreatetime()),
+                    goodsDao.getGoodsMsg(goodsId),
+                    goodsDao.getUserMsg(userId));
+            list.add(temp);
+        }
+        return list;
+    }
+
+    public List<RepliedMsgVO> repliedMsg() {
+
+        List<Message> msg = goodsDao.repliedMsg();
+
+        List<RepliedMsgVO> list = new ArrayList<RepliedMsgVO>();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        for (int i = 0; i < msg.size(); i++){
+            RepliedMsgVO temp = new RepliedMsgVO(msg.get(i).getId(),
+                    msg.get(i).getUserId(),
+                    msg.get(i).getGoodsId(),
+                    msg.get(i).getContent(),
+                    msg.get(i).getReplyContent(),
+                    msg.get(i).getState(),
+                    simpleDateFormat.format(msg.get(i).getCreatetime()),
+                    goodsDao.getGoodsMsg(msg.get(i).getGoodsId()),
+                    goodsDao.getUserMsg(msg.get(i).getUserId()));
+            list.add(temp);
+        }
+        return list;
+    }
+
+    public void reply(ReplyBO replyBO) {
+        goodsDao.reply(replyBO);
+    }
+
 
 }

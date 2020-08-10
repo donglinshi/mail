@@ -1,15 +1,15 @@
 package com.cskaoyan.mail.dao;
 
-import com.cskaoyan.mail.model.AddSpec;
-import com.cskaoyan.mail.model.Goods;
-import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.Type;
+import com.cskaoyan.mail.model.*;
 import com.cskaoyan.mail.model.bo.AddTypeBO;
 import com.cskaoyan.mail.model.bo.DeleteSpecBO;
+import com.cskaoyan.mail.model.bo.ReplyBO;
 import com.cskaoyan.mail.model.bo.UpdateSpecBO;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
+import com.cskaoyan.mail.model.vo.msg.UserMsg;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -225,5 +225,61 @@ public class GoodsDaoImpl implements GoodsDao {
         return query == 0 ? 1 : 0;
     }
 
+    public List<Message> noReplyMsg() {
 
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        List<Message> msg = null;
+        try {
+            msg = runner.query("select * from message where state = 1",new BeanListHandler<Message>(Message.class));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return msg;
+    }
+
+    public GoodsMsg getGoodsMsg(Integer goodsId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        GoodsMsg goods = null;
+        try {
+            goods = runner.query("select name from goods where id = ?",new BeanHandler<GoodsMsg>(GoodsMsg.class),goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return goods;
+    }
+
+    public UserMsg getUserMsg(Integer userId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        UserMsg user = null;
+        try {
+            user = runner.query("select nickname as name from user where id = ? ",new BeanHandler<UserMsg>(UserMsg.class),userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public List<Message> repliedMsg() {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        List<Message> list = null;
+        try {
+            list = runner.query("select * from message where state = 0",new BeanListHandler<Message>(Message.class));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void reply(ReplyBO replyBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update message set replyContent = ?,state = ? where id = ?",replyBO.getContent(),0,replyBO.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2,13 +2,12 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Type;
-import com.cskaoyan.mail.model.bo.AddGoodsBO;
-import com.cskaoyan.mail.model.bo.AddTypeBO;
-import com.cskaoyan.mail.model.bo.DeleteSpecBO;
-import com.cskaoyan.mail.model.bo.UpdateGoodsBO;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.GoodsInfoVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
 import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
+import com.cskaoyan.mail.model.vo.msg.RepliedMsgVO;
 
 import java.util.List;
 
@@ -38,4 +37,10 @@ public interface GoodsService {
     void addType(AddTypeBO addTypeBO);
 
     int deleteType(String typeId);
+
+    List<NoReplyMsgVO> noReplyMsg();
+
+    List<RepliedMsgVO> repliedMsg();
+
+    void reply(ReplyBO replyBO);
 }
