@@ -6,15 +6,13 @@ import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.vo.PageOrdersVO;
+import com.cskaoyan.mail.model.bo.SettleAccountsBO;
+import com.cskaoyan.mail.model.vo.*;
 import com.cskaoyan.mail.model.bo.ShoppingCartBO;
-import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.orderbyid.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author 史栋林
@@ -102,6 +100,51 @@ public class OrderServiceImpl implements OrderService {
         int code = orderDao.addCartOrder(spec,user,goods,shoppingCartBO);
 
         return code;
+    }
+
+    public List<GetOrderByStateVO> getOrderByState(String state, String token) {
+        //获取订单表中的相应信息
+        List<GetOrderInfoByStateFromOrder> lists = orderDao.getOrderInfo(state,token);
+        Boolean hasComments = true;
+        List<GetOrderByStateVO> listVO = new ArrayList<GetOrderByStateVO>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        for (GetOrderInfoByStateFromOrder order : lists){
+            //先判断是否有有评论
+            List<HasComments> comments = orderDao.hasComments(order.getUserId(),order.getGoodsId());
+            if (comments.isEmpty()){
+                hasComments = false;
+            }
+            //查询商品相关信息
+
+            Goods goods = orderDao.getGoods(order.getGoodsId());
+            Spec spec = orderDao.getSpecInfo(order.getGoodsDetailId());
+            GoodsInfoByState goodsInfo = new GoodsInfoByState(goods.getId(),goods.getImg(),goods.getName(),order.getGoodsDetailId(),spec.getSpecName(),spec.getUnitPrice());
+            listVO.add(new GetOrderByStateVO(order.getId(),
+                    order.getState(),
+                    order.getGoodsNum(),
+                    order.getAmount(),
+                    order.getGoodsDetailId(),
+                    simpleDateFormat.format(order.getCreatetime()),
+                    hasComments,
+                    goodsInfo));
+        }
+
+        return listVO;
+    }
+
+    public void settleAccounts(SettleAccountsBO account) {
+        orderDao.pay(account);
+    }
+
+    public void confiemRe(String id) {
+        Integer state = 3;
+        orderDao.confirm(id,state);
+    }
+
+    public void confirmPay(String id) {
+        Integer state = 1;
+        orderDao.confirm(id,state);
     }
 
 

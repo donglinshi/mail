@@ -4,10 +4,9 @@ import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
+import com.cskaoyan.mail.model.bo.SettleAccountsBO;
 import com.cskaoyan.mail.model.bo.ShoppingCartBO;
-import com.cskaoyan.mail.model.vo.PageOrdersVO;
-import com.cskaoyan.mail.model.vo.SpecInfoVO;
-import com.cskaoyan.mail.model.vo.UserInfoVO;
+import com.cskaoyan.mail.model.vo.*;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
 import com.cskaoyan.mail.utils.DruidUtils;
@@ -236,5 +235,58 @@ public class OrderDaoImpl implements OrderDao {
         return query != 0 ? 1 : 0;
     }
 
+    public List<GetOrderInfoByStateFromOrder> getOrderInfo(String state, String token) {
+        //存储参数
+        List<Object> listParam = new ArrayList<Object>();
+        listParam.add(token);
+        String baseSql = "select id, userId, goodsId, stateId as state, goodsNum, amount, goodsDetailId, createtime from orders where nickname = ? ";
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        //state = -1的时候为查询所有订单
+        if (Integer.parseInt(state) != -1){
+            //购物车  未付款 已发货  已到货
+            baseSql += " and stateId = ? ";
+            listParam.add(state);
+        }
+        List<GetOrderInfoByStateFromOrder> list = null;
+        try {
+            list = runner.query(baseSql,new BeanListHandler<GetOrderInfoByStateFromOrder>(GetOrderInfoByStateFromOrder.class),listParam.toArray());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<HasComments> hasComments(Integer userId, Integer goodsId) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        List<HasComments> list = null;
+        try {
+            list = runner.query("select comment from comments where userId = ? and goodsId = ?",
+                    new BeanListHandler<HasComments>(HasComments.class),userId,goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void pay(SettleAccountsBO account) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update orders set goodsNum = ?,amount = ?,stateId = ?  where id = ?",
+                    account.getGoodsNum(),account.getAmount(),1,account.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void confirm(String id,Integer state) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update orders set stateId = ? where id = ?",state,id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

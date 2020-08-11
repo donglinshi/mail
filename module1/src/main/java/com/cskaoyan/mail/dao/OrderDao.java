@@ -4,7 +4,10 @@ import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
+import com.cskaoyan.mail.model.bo.SettleAccountsBO;
 import com.cskaoyan.mail.model.bo.ShoppingCartBO;
+import com.cskaoyan.mail.model.vo.GetOrderInfoByStateFromOrder;
+import com.cskaoyan.mail.model.vo.HasComments;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
 import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
@@ -38,4 +41,13 @@ public interface OrderDao {
     Goods getGoods(Integer goodsId);
 
     int addCartOrder(Spec spec, UserInfoVO user, Goods goods, ShoppingCartBO shoppingCartBO);
+
+    List<GetOrderInfoByStateFromOrder> getOrderInfo(String state, String token);
+
+    List<HasComments> hasComments(Integer userId, Integer goodsId);
+
+    void pay(SettleAccountsBO account);
+
+    void confirm(String id,Integer state);
+
 }
