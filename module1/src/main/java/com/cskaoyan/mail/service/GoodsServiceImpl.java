@@ -1,17 +1,19 @@
 package com.cskaoyan.mail.service;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.cskaoyan.mail.dao.GoodsDao;
 import com.cskaoyan.mail.dao.GoodsDaoImpl;
 import com.cskaoyan.mail.model.*;
 import com.cskaoyan.mail.model.bo.*;
-import com.cskaoyan.mail.model.vo.GoodsInfoVO;
-import com.cskaoyan.mail.model.vo.SearchGoodsVO;
-import com.cskaoyan.mail.model.vo.SpecInfoVO;
-import com.cskaoyan.mail.model.vo.TypeGoodsVO;
-import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
-import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
-import com.cskaoyan.mail.model.vo.msg.RepliedMsgVO;
+import com.cskaoyan.mail.model.vo.*;
+import com.cskaoyan.mail.model.vo.msg.*;
+import com.cskaoyan.mail.utils.DruidUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
+import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -195,6 +197,50 @@ public class GoodsServiceImpl implements GoodsService {
 
     public List<SearchGoodsVO> searchGoods(String keyword) {
         return goodsDao.searchGoods(keyword);
+    }
+
+    public UserGoodsInfoVO getGoodsInfo(String id) {
+        return goodsDao.getGoodsInfo(id);
+    }
+
+    public List<GetMsgInfo> getGoodsMsg(String id) {
+        List<GetMsgInfo> list = new ArrayList<GetMsgInfo>();
+        List<AskVO> askVOS = goodsDao.getAskInfo(id);
+
+        for (AskVO ask : askVOS){
+            UserMsg userMsg = goodsDao.getUserMsg(ask.getUserId());
+            ReplyVO reply = goodsDao.getReplyInfo(ask.getId());
+            list.add(new GetMsgInfo(ask.getId(),ask.getContent(),userMsg.getName(),ask.getTime(),reply));
+        }
+        return list;
+    }
+
+    public List<CommentList> getGoodsComments(String goodsId) {
+
+        List<CommentList> commentLists = new ArrayList<CommentList>();
+
+        List<Comment> comments = goodsDao.getGoodsComments(goodsId);
+
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        for (Comment comment : comments){
+            UserNickname userNickname = goodsDao.getNickname(comment.getUserId());
+            commentLists.add(new CommentList(userNickname,
+                    comment.getScore(),
+                    comment.getId(),
+                    comment.getSpecName(),
+                    comment.getComment(),
+                    format1.format(comment.getTime()),
+                    comment.getUserId()));
+        }
+        return commentLists;
+    }
+
+    public void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO) {
+        GetUserIdByNameVO userId = goodsDao.getUserIdByName(askGoodsMsgBO.getToken());
+
+        goodsDao.askGoodsMsg(askGoodsMsgBO,userId.getId());
+
     }
 
 

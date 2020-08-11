@@ -1,8 +1,12 @@
 package com.cskaoyan.mail.dao;
 
+import com.cskaoyan.mail.model.Goods;
+import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
+import com.cskaoyan.mail.model.bo.ShoppingCartBO;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
+import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
 
@@ -26,4 +30,12 @@ public interface OrderDao {
     void changeOrder(ChangeOrderBO changeOrderBO);
 
     void deleteOrder(String id);
+
+    UserInfoVO getUserInfo(String token);
+
+    Spec getSpecInfo(Integer id);
+
+    Goods getGoods(Integer goodsId);
+
+    int addCartOrder(Spec spec, UserInfoVO user, Goods goods, ShoppingCartBO shoppingCartBO);
 }

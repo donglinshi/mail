@@ -2,9 +2,13 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.dao.OrderDao;
 import com.cskaoyan.mail.dao.OrderDaoImpl;
+import com.cskaoyan.mail.model.Goods;
+import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
+import com.cskaoyan.mail.model.bo.ShoppingCartBO;
+import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.orderbyid.*;
 
 import java.util.ArrayList;
@@ -84,6 +88,20 @@ public class OrderServiceImpl implements OrderService {
 
     public void deleteOrder(String id) {
         orderDao.deleteOrder(id);
+    }
+
+    public int addOrder(ShoppingCartBO shoppingCartBO) {
+        //先查询规格信息
+        Spec spec = orderDao.getSpecInfo(shoppingCartBO.getGoodsDetailId());
+        if (spec.getStockNum() <= 0){
+            return -1;
+        }
+        UserInfoVO user = orderDao.getUserInfo(shoppingCartBO.getToken());
+        Goods goods = orderDao.getGoods(spec.getGoodsId());
+
+        int code = orderDao.addCartOrder(spec,user,goods,shoppingCartBO);
+
+        return code;
     }
 
 

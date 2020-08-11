@@ -1,16 +1,9 @@
 package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.*;
-import com.cskaoyan.mail.model.bo.AddTypeBO;
-import com.cskaoyan.mail.model.bo.DeleteSpecBO;
-import com.cskaoyan.mail.model.bo.ReplyBO;
-import com.cskaoyan.mail.model.bo.UpdateSpecBO;
-import com.cskaoyan.mail.model.vo.GoodsInfoVO;
-import com.cskaoyan.mail.model.vo.SearchGoodsVO;
-import com.cskaoyan.mail.model.vo.SpecInfoVO;
-import com.cskaoyan.mail.model.vo.TypeGoodsVO;
-import com.cskaoyan.mail.model.vo.msg.GoodsMsg;
-import com.cskaoyan.mail.model.vo.msg.UserMsg;
+import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.*;
+import com.cskaoyan.mail.model.vo.msg.*;
 import com.cskaoyan.mail.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -19,6 +12,7 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -296,5 +290,92 @@ public class GoodsDaoImpl implements GoodsDao {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public UserGoodsInfoVO getGoodsInfo(String id) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        UserGoodsInfoVO goodsInfoVO = null;
+        try {
+            goodsInfoVO = runner.query("select img,name,`desc`,typeId from goods where id = ?",new BeanHandler<UserGoodsInfoVO>(UserGoodsInfoVO.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return goodsInfoVO;
+    }
+
+    public List<AskVO> getAskInfo(String id) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<AskVO> askVOS = null;
+        try {
+            askVOS = runner.query("select id,content,userId,createtime as time from message where goodsId = ?",
+                    new BeanListHandler<AskVO>(AskVO.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return askVOS;
+    }
+
+    public ReplyVO getReplyInfo(Integer id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        ReplyVO replyVO = null;
+        try {
+            replyVO = runner.query("select replyContent as content ,replytime as time from message where id = ?",
+            new BeanHandler<ReplyVO>(ReplyVO.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return replyVO;
+    }
+
+    public List<Comment> getGoodsComments(String goodsId) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<Comment> comments = null;
+        try {
+            comments = runner.query("select score, id, specName,comment,time,userId from comments where goodsId = ?",
+                    new BeanListHandler<Comment>(Comment.class),goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return comments;
+    }
+
+    public UserNickname getNickname(Integer userId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        UserNickname userNickname = null;
+        try {
+            userNickname = runner.query("select nickname from user where id = ?",new BeanHandler<UserNickname>(UserNickname.class),userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userNickname;
+    }
+
+    public GetUserIdByNameVO getUserIdByName(String token) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        GetUserIdByNameVO user = null;
+        try {
+            user = runner.query("select id from user where nickname = ? ",new BeanHandler<GetUserIdByNameVO>(GetUserIdByNameVO.class),token);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO, Integer id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Date time = new Date();
+        try {
+            runner.update("insert into message (userId,goodsId,content,state,createtime) values(?,?,?,?,?)",
+                    id,
+                    askGoodsMsgBO.getGoodsId(),
+                    askGoodsMsgBO.getMsg(),
+                    1,
+                    new java.sql.Date(time.getTime()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

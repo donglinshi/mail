@@ -3,10 +3,9 @@ package com.cskaoyan.mail.service;
 import com.cskaoyan.mail.model.AddSpec;
 import com.cskaoyan.mail.model.Type;
 import com.cskaoyan.mail.model.bo.*;
-import com.cskaoyan.mail.model.vo.GoodsInfoVO;
-import com.cskaoyan.mail.model.vo.SearchGoodsVO;
-import com.cskaoyan.mail.model.vo.SpecInfoVO;
-import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.vo.*;
+import com.cskaoyan.mail.model.vo.msg.CommentList;
+import com.cskaoyan.mail.model.vo.msg.GetMsgInfo;
 import com.cskaoyan.mail.model.vo.msg.NoReplyMsgVO;
 import com.cskaoyan.mail.model.vo.msg.RepliedMsgVO;
 
@@ -47,4 +46,13 @@ public interface GoodsService {
 
     //前端的搜索
     List<SearchGoodsVO> searchGoods(String keyword);
+
+    //用户获取指定商品信息
+    UserGoodsInfoVO getGoodsInfo(String id);
+
+    List<GetMsgInfo> getGoodsMsg(String id);
+
+    List<CommentList> getGoodsComments(String goodsId);
+
+    void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO);
 }

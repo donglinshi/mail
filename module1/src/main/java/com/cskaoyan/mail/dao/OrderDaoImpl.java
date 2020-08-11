@@ -1,9 +1,13 @@
 package com.cskaoyan.mail.dao;
 
+import com.cskaoyan.mail.model.Goods;
+import com.cskaoyan.mail.model.Spec;
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
+import com.cskaoyan.mail.model.bo.ShoppingCartBO;
 import com.cskaoyan.mail.model.vo.PageOrdersVO;
 import com.cskaoyan.mail.model.vo.SpecInfoVO;
+import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
 import com.cskaoyan.mail.utils.DruidUtils;
@@ -14,10 +18,7 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 史栋林
@@ -172,4 +173,68 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
     }
+
+    public UserInfoVO getUserInfo(String token) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        UserInfoVO user = null;
+        try {
+            user = runner.query("select id,email,nickname,recipient,address,phone from user where nickname = ?",new BeanHandler<UserInfoVO>(UserInfoVO.class),token);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public Spec getSpecInfo(Integer id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Spec spec = null;
+        try {
+            spec = runner.query("select * from spec where id = ?",new BeanHandler<Spec>(Spec.class),id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return spec;
+    }
+
+    public Goods getGoods(Integer goodsId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Goods goods = null;
+        try {
+            goods = runner.query("select * from goods where id = ?",new BeanHandler<Goods>(Goods.class),goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return goods;
+    }
+
+    public int addCartOrder(Spec spec, UserInfoVO user, Goods goods, ShoppingCartBO shoppingCartBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Integer query = null;
+        Date time = new Date();
+        try {
+            query = runner.update("insert into orders values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    null,
+                    user.getId(),
+                    user.getNickname(),
+                    user.getRecipient(),
+                    user.getAddress(),
+                    user.getPhone(),
+                    goods.getName(),
+                    goods.getId(),
+                    spec.getSpecName(),
+                    spec.getId(),
+                    spec.getUnitPrice(),
+                    shoppingCartBO.getNum(),
+                    shoppingCartBO.getAmount(),
+                    shoppingCartBO.getState(),
+                    new java.sql.Date(time.getTime()),
+                    null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return query != 0 ? 1 : 0;
+    }
+
+
 }

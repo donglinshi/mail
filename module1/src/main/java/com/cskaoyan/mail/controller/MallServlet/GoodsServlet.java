@@ -1,10 +1,12 @@
 package com.cskaoyan.mail.controller.MallServlet;
 
 import com.cskaoyan.mail.model.Result;
-import com.cskaoyan.mail.model.vo.SearchGoodsVO;
-import com.cskaoyan.mail.model.vo.TypeGoodsVO;
+import com.cskaoyan.mail.model.bo.AskGoodsMsgBO;
+import com.cskaoyan.mail.model.vo.*;
+import com.cskaoyan.mail.model.vo.msg.*;
 import com.cskaoyan.mail.service.GoodsService;
 import com.cskaoyan.mail.service.GoodsServiceImpl;
+import com.cskaoyan.mail.utils.HttpUtils;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,7 +29,24 @@ public class GoodsServlet extends HttpServlet {
     private GoodsService goodsService = new GoodsServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/mall/goods/", "");
+        if ("askGoodsMsg".equals(action)){
+            askGoodsMsg(request,response);
+        }
 
+    }
+
+    /**
+     * @description:发送提问
+     * @params:
+     * @author: 史栋林
+     */
+    private void askGoodsMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AskGoodsMsgBO askGoodsMsgBO = gson.fromJson(requestBody, AskGoodsMsgBO.class);
+        goodsService.askGoodsMsg(askGoodsMsgBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,8 +57,70 @@ public class GoodsServlet extends HttpServlet {
             getGoodsByType(request,response);
         }else if ("searchGoods".equals(action)){
             searchGoods(request,response);
+        }else if ("getGoodsInfo".equals(action)){
+            getUserGoodsInfo(request,response);
+        }else if ("getGoodsMsg".equals(action)){
+            getGoodsMsg(request,response);
+        }else if ("getGoodsComment".equals(action)){
+            //获取商品评论有问题
+            //getGoodsComments(request,response);
         }
 
+    }
+
+
+    /**
+     * @description:获取用户评论
+     * @params:
+     * @author: 史栋林
+     */
+    private void getGoodsComments(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String goodsId = request.getParameter("goodsId");
+
+        List<CommentList> lists = goodsService.getGoodsComments(goodsId);
+        Double score = 0.0;
+        for (CommentList commentList : lists){
+            score += commentList.getScore();
+        }
+        CommentsVO commentsVO = new CommentsVO(lists,score /lists.size());
+
+        response.getWriter().println(gson.toJson(Result.ok(commentsVO)));
+    }
+
+    /**
+     * @description:获取问答信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void getGoodsMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //商品的id
+        String id = request.getParameter("id");
+
+        List<GetMsgInfo> msg = goodsService.getGoodsMsg(id);
+
+        response.getWriter().println(gson.toJson(Result.ok(msg)));
+    }
+
+    /**
+     * @description:获取商品你的详细信息
+     * @params:
+     * @author: 史栋林
+     */
+    private void getUserGoodsInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        //应该再service封装数据的，暂时不改了
+        String id = request.getParameter("id");
+
+        UserGoodsInfoVO userGoodsInfoVO = goodsService.getGoodsInfo(id);
+        //获取指定商品的规格信息
+        List<SpecInfoVO> list = goodsService.getSpecs(id);
+        UserGoodsAndSpecVO userGoodsAndSpecVO = new UserGoodsAndSpecVO(userGoodsInfoVO.getImg(),
+                userGoodsInfoVO.getName(),
+                userGoodsInfoVO.getDesc(),
+                userGoodsInfoVO.getTypeId(),
+                list);
+
+        response.getWriter().println(gson.toJson(Result.ok(userGoodsAndSpecVO)));
     }
 
     /**

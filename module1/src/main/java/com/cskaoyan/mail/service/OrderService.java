@@ -2,10 +2,8 @@ package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.model.bo.ChangeOrderBO;
 import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.vo.PageOrdersVO;
-import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
+import com.cskaoyan.mail.model.bo.ShoppingCartBO;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,4 +20,6 @@ public interface OrderService {
     void changeOrder(ChangeOrderBO changeOrderBO);
 
     void deleteOrder(String id);
+
+    int addOrder(ShoppingCartBO shoppingCartBO);
 }
