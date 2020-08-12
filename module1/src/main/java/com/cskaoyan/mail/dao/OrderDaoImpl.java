@@ -2,10 +2,7 @@ package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.bo.ChangeOrderBO;
-import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.bo.SettleAccountsBO;
-import com.cskaoyan.mail.model.bo.ShoppingCartBO;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.*;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
@@ -284,6 +281,47 @@ public class OrderDaoImpl implements OrderDao {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
             runner.update("update orders set stateId = ? where id = ?",state,id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public OrderSendCommentInfo getOrderSpecName(Integer orderId) {
+
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        OrderSendCommentInfo orderInfo = null;
+        try {
+            orderInfo = runner.query("select userId, spec from orders where id = ?",new BeanHandler<OrderSendCommentInfo>(OrderSendCommentInfo.class),orderId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderInfo;
+    }
+
+    public void sendComment(SendCommentBO sendCommentBO, OrderSendCommentInfo info) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Date time = new Date();
+        try {
+            runner.update("insert into comments values (?,?,?,?,?,?,?,?)",
+                    null,
+                    sendCommentBO.getScore(),
+                    sendCommentBO.getGoodsId(),
+                    info.getUserId(),
+                    sendCommentBO.getOrderId(),
+                    info.getSpec(),
+                    sendCommentBO.getContent(),
+                    new java.sql.Date(time.getTime())
+                    );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStockNum(Integer goodsDetailId,Integer currentNum) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        String baseSql = " update spec set stockNum = ? where id = ?";
+        try {
+            runner.update(baseSql,currentNum,goodsDetailId);
         } catch (SQLException e) {
             e.printStackTrace();
         }

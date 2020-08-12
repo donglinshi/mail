@@ -1,7 +1,10 @@
 package com.cskaoyan.mail.service;
 
 import com.cskaoyan.mail.model.User;
+import com.cskaoyan.mail.model.UserModify;
 import com.cskaoyan.mail.model.bo.AdminLoginBO;
+import com.cskaoyan.mail.model.bo.UserInfoBO;
+import com.cskaoyan.mail.model.bo.UserUpdatePwdBO;
 import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.UserName;
 
@@ -24,4 +27,10 @@ public interface UserService {
     int login(AdminLoginBO user);
 
     UserName searchName(String email, String pwd);
+
+    UserModify getData(String token);
+
+    int updateUserPwd(UserUpdatePwdBO userUpdatePwdBO);
+
+    void updateData(UserInfoBO userInfoBO);
 }

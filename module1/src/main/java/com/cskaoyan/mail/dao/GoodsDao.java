@@ -60,11 +60,12 @@ public interface GoodsDao {
 
     ReplyVO getReplyInfo(Integer id);
 
-    List<Comment> getGoodsComments(String goodsId);
-
-    UserNickname getNickname(Integer userId);
 
     GetUserIdByNameVO getUserIdByName(String token);
 
     void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO, Integer id);
+
+    List<Comment> getComments(String goodsId);
+
+    UserNickname getNickname(Integer userId);
 }

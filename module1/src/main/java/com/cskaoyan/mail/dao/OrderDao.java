@@ -2,14 +2,8 @@ package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.bo.ChangeOrderBO;
-import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.bo.SettleAccountsBO;
-import com.cskaoyan.mail.model.bo.ShoppingCartBO;
-import com.cskaoyan.mail.model.vo.GetOrderInfoByStateFromOrder;
-import com.cskaoyan.mail.model.vo.HasComments;
-import com.cskaoyan.mail.model.vo.PageOrdersVO;
-import com.cskaoyan.mail.model.vo.UserInfoVO;
+import com.cskaoyan.mail.model.bo.*;
+import com.cskaoyan.mail.model.vo.*;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderByIdVO;
 import com.cskaoyan.mail.model.vo.orderbyid.OrderSpecVO;
 
@@ -50,4 +44,9 @@ public interface OrderDao {
 
     void confirm(String id,Integer state);
 
+    OrderSendCommentInfo getOrderSpecName(Integer orderId);
+
+    void sendComment(SendCommentBO sendCommentBO, OrderSendCommentInfo info);
+
+    void updateStockNum(Integer goodsDetailId,Integer currentNum);
 }

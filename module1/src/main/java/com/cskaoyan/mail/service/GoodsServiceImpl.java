@@ -215,27 +215,6 @@ public class GoodsServiceImpl implements GoodsService {
         return list;
     }
 
-    public List<CommentList> getGoodsComments(String goodsId) {
-
-        List<CommentList> commentLists = new ArrayList<CommentList>();
-
-        List<Comment> comments = goodsDao.getGoodsComments(goodsId);
-
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        for (Comment comment : comments){
-            UserNickname userNickname = goodsDao.getNickname(comment.getUserId());
-            commentLists.add(new CommentList(userNickname,
-                    comment.getScore(),
-                    comment.getId(),
-                    comment.getSpecName(),
-                    comment.getComment(),
-                    format1.format(comment.getTime()),
-                    comment.getUserId()));
-        }
-        return commentLists;
-    }
-
     public void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO) {
         GetUserIdByNameVO userId = goodsDao.getUserIdByName(askGoodsMsgBO.getToken());
 
@@ -243,5 +222,29 @@ public class GoodsServiceImpl implements GoodsService {
 
     }
 
+    public List<CommentList> getGoodsComments(String goodsId) {
+
+        List<CommentList> commentLists = new ArrayList<CommentList>();
+        //需要封装数据
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        List<Comment> lists = goodsDao.getComments(goodsId);
+        //获取nickname信息,开始封装
+        for (Comment comment : lists){
+            //获取nickname
+            UserNickname nickname = goodsDao.getNickname(comment.getUserId());
+            CommentList commentList = new CommentList(
+                    nickname,
+                    comment.getScore(),
+                    comment.getId(),
+                    comment.getSpecName(),
+                    comment.getComment(),
+                    simpleDateFormat.format(comment.getTime()),
+                    comment.getUserId()
+                    );
+            commentLists.add(commentList);
+        }
+        return commentLists;
+    }
 
 }

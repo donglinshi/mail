@@ -1,7 +1,10 @@
 package com.cskaoyan.mail.dao;
 
 import com.cskaoyan.mail.model.User;
+import com.cskaoyan.mail.model.UserModify;
 import com.cskaoyan.mail.model.bo.AdminLoginBO;
+import com.cskaoyan.mail.model.bo.UserInfoBO;
+import com.cskaoyan.mail.model.bo.UserUpdatePwdBO;
 import com.cskaoyan.mail.model.vo.UserInfoVO;
 import com.cskaoyan.mail.model.vo.UserName;
 import com.cskaoyan.mail.model.vo.UserReturnVO;
@@ -109,5 +112,47 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
         }
         return userName;
+    }
+
+    public UserInfoVO getData(String token) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        String sql = "select id,email,nickname,recipient,address,phone from user where nickname = ?";
+        UserInfoVO user = null;
+        try {
+            user = runner.query(sql,new BeanHandler<UserInfoVO>(UserInfoVO.class),token);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public int getPwdInfo(Integer id, String oldPwd) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Long query = null;
+        try {
+            query = (Long) runner.query("select count(id) from user where id = ? and pwd = ?",new ScalarHandler(),id,oldPwd);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return query !=0 ? 1 : 0;
+    }
+
+    public void updatePwd(UserUpdatePwdBO userUpdatePwdBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update user set pwd = ? where id = ?",userUpdatePwdBO.getNewPwd(),userUpdatePwdBO.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateData(UserInfoBO userInfoBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update user set nickname = ?, recipient = ?, address = ?, phone = ? where id = ?",userInfoBO.getNickname(),
+                    userInfoBO.getRecipient(),userInfoBO.getAddress(),userInfoBO.getPhone(),userInfoBO.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.cskaoyan.mail.controller.MallServlet;
 
 import com.cskaoyan.mail.model.Result;
+import com.cskaoyan.mail.model.bo.SendCommentBO;
 import com.cskaoyan.mail.model.bo.SettleAccountsBO;
 import com.cskaoyan.mail.model.bo.SettleBO;
 import com.cskaoyan.mail.model.bo.ShoppingCartBO;
@@ -43,11 +44,26 @@ public class OrderServlet extends HttpServlet {
             addOrder(request,response);
         }else if ("settleAccounts".equals(action)){
             settleAccounts(request,response);
+        }else if ("sendComment".equals(action)){
+            sendComment(request,response);
         }
     }
 
     /**
-     * @description:
+     * @description:用户对商品的评价
+     * @params:
+     * @author: 史栋林
+     */
+    private void sendComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        SendCommentBO sendCommentBO = gson.fromJson(requestBody,SendCommentBO.class);
+
+        orderService.sendComment(sendCommentBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * @description:购物车下单
      * @params:
      * @author: 史栋林
      */

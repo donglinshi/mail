@@ -4,11 +4,8 @@ import com.cskaoyan.mail.dao.OrderDao;
 import com.cskaoyan.mail.dao.OrderDaoImpl;
 import com.cskaoyan.mail.model.Goods;
 import com.cskaoyan.mail.model.Spec;
-import com.cskaoyan.mail.model.bo.ChangeOrderBO;
-import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.bo.SettleAccountsBO;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.*;
-import com.cskaoyan.mail.model.bo.ShoppingCartBO;
 import com.cskaoyan.mail.model.vo.orderbyid.*;
 
 import java.text.SimpleDateFormat;
@@ -91,11 +88,14 @@ public class OrderServiceImpl implements OrderService {
     public int addOrder(ShoppingCartBO shoppingCartBO) {
         //先查询规格信息
         Spec spec = orderDao.getSpecInfo(shoppingCartBO.getGoodsDetailId());
-        if (spec.getStockNum() <= 0){
+        if (spec.getStockNum() <= 0 || shoppingCartBO.getNum() > spec.getStockNum()){
             return -1;
         }
         UserInfoVO user = orderDao.getUserInfo(shoppingCartBO.getToken());
         Goods goods = orderDao.getGoods(spec.getGoodsId());
+
+        //需要更新库存
+        orderDao.updateStockNum(shoppingCartBO.getGoodsDetailId(),spec.getStockNum() - shoppingCartBO.getNum());
 
         int code = orderDao.addCartOrder(spec,user,goods,shoppingCartBO);
 
@@ -145,6 +145,13 @@ public class OrderServiceImpl implements OrderService {
     public void confirmPay(String id) {
         Integer state = 1;
         orderDao.confirm(id,state);
+    }
+
+    public void sendComment(SendCommentBO sendCommentBO) {
+        //先查询订单是否存在以及相关信息
+        OrderSendCommentInfo info = orderDao.getOrderSpecName(sendCommentBO.getOrderId());
+
+        orderDao.sendComment(sendCommentBO,info);
     }
 
 

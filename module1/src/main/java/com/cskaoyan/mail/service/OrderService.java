@@ -1,9 +1,6 @@
 package com.cskaoyan.mail.service;
 
-import com.cskaoyan.mail.model.bo.ChangeOrderBO;
-import com.cskaoyan.mail.model.bo.PageOrderBO;
-import com.cskaoyan.mail.model.bo.SettleAccountsBO;
-import com.cskaoyan.mail.model.bo.ShoppingCartBO;
+import com.cskaoyan.mail.model.bo.*;
 import com.cskaoyan.mail.model.vo.GetOrderByStateVO;
 
 import java.util.List;
@@ -33,4 +30,6 @@ public interface OrderService {
     void confiemRe(String id);
 
     void confirmPay(String id);
+
+    void sendComment(SendCommentBO sendCommentBO);
 }

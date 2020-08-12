@@ -1,10 +1,8 @@
 package com.cskaoyan.mail.model.vo.msg;
 
-import java.sql.Date;
-
 /**
  * @author 史栋林
- * @date 2020/8/11 14:54
+ * @date 2020/8/12 16:38
  */
 public class CommentList {
 

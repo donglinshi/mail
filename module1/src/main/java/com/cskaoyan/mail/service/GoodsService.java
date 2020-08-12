@@ -52,7 +52,8 @@ public interface GoodsService {
 
     List<GetMsgInfo> getGoodsMsg(String id);
 
-    List<CommentList> getGoodsComments(String goodsId);
 
     void askGoodsMsg(AskGoodsMsgBO askGoodsMsgBO);
+
+    List<CommentList> getGoodsComments(String goodsId);
 }

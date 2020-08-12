@@ -62,8 +62,7 @@ public class GoodsServlet extends HttpServlet {
         }else if ("getGoodsMsg".equals(action)){
             getGoodsMsg(request,response);
         }else if ("getGoodsComment".equals(action)){
-            //获取商品评论有问题
-            //getGoodsComments(request,response);
+            getGoodsComments(request,response);
         }
 
     }
@@ -76,15 +75,26 @@ public class GoodsServlet extends HttpServlet {
      */
     private void getGoodsComments(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String goodsId = request.getParameter("goodsId");
-
+        //获取ComentList的相关信息
         List<CommentList> lists = goodsService.getGoodsComments(goodsId);
         Double score = 0.0;
-        for (CommentList commentList : lists){
-            score += commentList.getScore();
+        Integer num = 0;
+        //计算分数的大小
+        if (!lists.isEmpty()){
+            for (CommentList commentList : lists){
+                if (commentList.getScore() != 0 ){
+                    score += commentList.getScore();
+                    num++;
+                }
+            }
+            if (num != 0){
+                CommentsVO commentsVO = new CommentsVO(lists,score / num);
+                response.getWriter().println(gson.toJson(Result.ok(commentsVO)));
+                return;
+            }
         }
-        CommentsVO commentsVO = new CommentsVO(lists,score /lists.size());
-
-        response.getWriter().println(gson.toJson(Result.ok(commentsVO)));
+        //评价为空或评分为0
+        response.getWriter().println(gson.toJson(Result.ok(new CommentsVO(lists))));
     }
 
     /**

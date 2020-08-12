@@ -271,8 +271,10 @@ public class GoodsDaoImpl implements GoodsDao {
 
     public void reply(ReplyBO replyBO) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        //打补丁增添回复时间
+        Date time = new Date();
         try {
-            runner.update("update message set replyContent = ?,state = ? where id = ?",replyBO.getContent(),0,replyBO.getId());
+            runner.update("update message set replyContent = ?,state = ?, replytime = ?  where id = ?",replyBO.getContent(),0,new java.sql.Date(time.getTime()),replyBO.getId());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -329,19 +331,6 @@ public class GoodsDaoImpl implements GoodsDao {
         return replyVO;
     }
 
-    public List<Comment> getGoodsComments(String goodsId) {
-
-        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
-        List<Comment> comments = null;
-        try {
-            comments = runner.query("select score, id, specName,comment,time,userId from comments where goodsId = ?",
-                    new BeanListHandler<Comment>(Comment.class),goodsId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return comments;
-    }
-
     public UserNickname getNickname(Integer userId) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         UserNickname userNickname = null;
@@ -377,5 +366,17 @@ public class GoodsDaoImpl implements GoodsDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Comment> getComments(String goodsId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        String baseSql = " select score, id, specName, comment, time, userId from comments where goodsId = ?";
+        List<Comment> lists = null;
+        try {
+            lists = runner.query(baseSql,new BeanListHandler<Comment>(Comment.class),goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lists;
     }
 }
